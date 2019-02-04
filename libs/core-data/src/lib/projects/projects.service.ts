@@ -1,18 +1,24 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
-const BASE_URL = 'http://localhost:3000/';
+import { Injectable } from '@angular/core';
+import { of, throwError } from 'rxjs';
+import { switchMap, catchError } from 'rxjs/operators';
+import { environment } from '@env/environment';
+import { Project } from './project.model';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectsService {
-  model = 'projects';
+  model = 'projects'
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private notificationsService: NotificationsService
+  ) { }
 
   getUrl() {
-    return `${BASE_URL}${this.model}`;
+    return `${environment.apiEndpoint}${this.model}`;
   }
 
   getUrlForId(id) {
@@ -20,18 +26,40 @@ export class ProjectsService {
   }
 
   all() {
-    return this.httpClient.get(this.getUrl());
+    return this.http.get<Project[]>(this.getUrl());
   }
 
-  create(project) {
-    return this.httpClient.post(this.getUrl(), project);
+  load(id) {
+    return this.http.get<Project>(this.getUrlForId(id));
   }
 
-  update(project) {
-    return this.httpClient.patch(this.getUrlForId(project.id), project);
+  loadByCustomer(customerId: string) {
+    return this.http.get<Project[]>(this.getUrl(), {params: {customerId}})
+      .pipe(
+        switchMap(projects => {
+          if (projects.length) {
+            return of(projects);
+          } else {
+            return throwError(`No projects exist for customer with ID ${customerId}`);
+          }
+        }),
+        catchError(error => {
+          this.notificationsService.emit(error);
+
+          return throwError(error);
+        })
+      )
   }
 
-  delete(projectId) {
-    return this.httpClient.delete(this.getUrlForId(projectId));
+  create(project: Project) {
+    return this.http.post(this.getUrl(), project);
+  }
+
+  update(project: Project) {
+    return this.http.patch(this.getUrlForId(project.id), project);
+  }
+
+  delete(project: Project) {
+    return this.http.delete(this.getUrlForId(project.id));
   }
 }
