@@ -1,8 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProjectsListComponent } from './projects-list.component';
-import { MaterialModule } from '@workshop/material';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('ProjectsListComponent', () => {
   let component: ProjectsListComponent;
@@ -10,11 +8,7 @@ describe('ProjectsListComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ProjectsListComponent ],
-      imports: [
-        MaterialModule,
-        BrowserAnimationsModule
-      ]
+      declarations: [ ProjectsListComponent ]
     })
     .compileComponents();
   }));

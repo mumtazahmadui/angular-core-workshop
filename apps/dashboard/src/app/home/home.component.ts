@@ -1,3 +1,5 @@
+import { Observable } from 'rxjs';
+import { Customer, CustomersService } from '@workshop/core-data';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -6,10 +8,15 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+  customers$: Observable<Customer[]>;
 
-  constructor() { }
+  constructor(private customersService: CustomersService) { }
 
   ngOnInit() {
+    this.getCustomers();
   }
 
+  getCustomers() {
+    this.customers$ = this.customersService.all();
+  }
 }
