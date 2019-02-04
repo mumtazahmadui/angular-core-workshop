@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import {
+import  {
   MatButtonModule,
   MatCardModule,
   MatCheckboxModule,
@@ -16,7 +16,7 @@ import {
   MatTableModule,
   MatToolbarModule,
   MatButtonToggleModule
-} from '@angular/material';
+}  from  '@angular/material';
 
 @NgModule({
   imports: [
