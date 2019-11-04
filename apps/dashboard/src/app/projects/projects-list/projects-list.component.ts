@@ -1,33 +1,15 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Project } from '@workshop/core-data';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
-import { LIST_ANIMATION } from './projects-list.animations';
+import { Project } from '@workshop/core-data';
 
 @Component({
   selector: 'app-projects-list',
   templateUrl: './projects-list.component.html',
-  styleUrls: ['./projects-list.component.scss'],
-  animations: [LIST_ANIMATION]
+  styleUrls: ['./projects-list.component.css']
 })
-export class ProjectsListComponent implements OnInit {
+export class ProjectsListComponent {
   @Input() projects: Project[];
   @Input() readonly = false;
   @Output() selected = new EventEmitter();
   @Output() deleted = new EventEmitter();
-
-  animationsDisabled = true;
-
-  trackProject(index, project) {
-    return project.id;
-  }
-
-  ngOnInit() {
-    setTimeout(() => {
-      this.animationsDisabled = false;
-    }, 500)
-  }
-
-  prepareListState() {
-    return this.projects ? this.projects.length : 'pending';
-  }
 }

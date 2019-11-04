@@ -1,24 +1,17 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { of, throwError } from 'rxjs';
-import { switchMap, catchError } from 'rxjs/operators';
-import { environment } from '@env/environment';
-import { Project } from './project.model';
-import { NotificationsService } from '../notifications/notifications.service';
+import { HttpClient } from '@angular/common/http';
+
+const BASE_URL = 'http://localhost:3000/';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectsService {
-  model = 'projects'
-
-  constructor(
-    private http: HttpClient,
-    private notificationsService: NotificationsService
-  ) { }
+  model = 'projects';
+  constructor(private httpClient: HttpClient) { }
 
   getUrl() {
-    return `${environment.apiEndpoint}${this.model}`;
+    return `${BASE_URL}${this.model}`;
   }
 
   getUrlForId(id) {
@@ -26,40 +19,18 @@ export class ProjectsService {
   }
 
   all() {
-    return this.http.get<Project[]>(this.getUrl());
+    return this.httpClient.get(this.getUrl());
   }
 
-  load(id) {
-    return this.http.get<Project>(this.getUrlForId(id));
+  create(project) {
+    return this.httpClient.post(this.getUrl(), project);
   }
 
-  loadByCustomer(customerId: string) {
-    return this.http.get<Project[]>(this.getUrl(), {params: {customerId}})
-      .pipe(
-        switchMap(projects => {
-          if (projects.length) {
-            return of(projects);
-          } else {
-            return throwError(`No projects exist for customer with ID ${customerId}`);
-          }
-        }),
-        catchError(error => {
-          this.notificationsService.emit(error);
-
-          return throwError(error);
-        })
-      )
+  update(project) {
+    return this.httpClient.patch(this.getUrlForId(project.id), project);
   }
 
-  create(project: Project) {
-    return this.http.post(this.getUrl(), project);
-  }
-
-  update(project: Project) {
-    return this.http.patch(this.getUrlForId(project.id), project);
-  }
-
-  delete(project: Project) {
-    return this.http.delete(this.getUrlForId(project.id));
+  delete(projectId) {
+    return this.httpClient.delete(this.getUrlForId(projectId));
   }
 }
